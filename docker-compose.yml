@@ -18,7 +18,7 @@ services:
   frontend:
     image: hamasandid/frontend_img:5.5
     ports:
-      - "4301:80"
+      - "4444:80"
     depends_on:
       - backend
     networks:
