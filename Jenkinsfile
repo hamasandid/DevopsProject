@@ -8,19 +8,13 @@ pipeline {
     }
 
     environment {
-        DOCKERHUB_USER = 'jihed601' // 🛠️ Replace with your Docker Hub username
+        DOCKERHUB_USER = 'hamasandid'
         FRONTEND_IMAGE = 'frontend_img'
         BACKEND_IMAGE = 'backend_img'
         VERSION = '5.5'
-        PATH = "C:\\Program Files\\Git\\bin;${env.PATH};C:\\Program Files\\Docker\\Docker\\resources\\bin"
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/jihedna/projetdevops.git'
-            }
-        }
 
         stage('Build Frontend') {
             steps {
@@ -28,8 +22,6 @@ pipeline {
                     def frontendDir = "${WORKSPACE}/gestionEmployeeFront"
                     if (isUnix()) {
                         sh "cd ${frontendDir} && npm install && npm run build --prod"
-                    } else {
-                        bat "cd ${frontendDir} && npm install && npm run build --prod"
                     }
                 }
             }
@@ -41,8 +33,6 @@ pipeline {
                     script {
                         if (isUnix()) {
                             sh 'mvn clean install -DskipTests'
-                        } else {
-                            bat 'mvn clean install -DskipTests'
                         }
                     }
                 }
@@ -57,11 +47,6 @@ pipeline {
                             docker build -t ${DOCKERHUB_USER}/${BACKEND_IMAGE}:${VERSION} ./gestionEmployees/gestion-employes
                             docker build -t ${DOCKERHUB_USER}/${FRONTEND_IMAGE}:${VERSION} ./gestionEmployeeFront
                         """
-                    } else {
-                        bat """
-                            docker build -t %DOCKERHUB_USER%/%BACKEND_IMAGE%:%VERSION% ./gestionEmployees/gestion-employes
-                            docker build -t %DOCKERHUB_USER%/%FRONTEND_IMAGE%:%VERSION% ./gestionEmployeeFront
-                        """
                     }
                 }
             }
@@ -72,15 +57,9 @@ pipeline {
                 script {
                     if (isUnix()) {
                         sh """
-                            echo "dckr_pat_q2kLN5GhImSZ2rQvmoPX8wtyWkc" | docker login -u "jihed601" --password-stdin
+                            echo "dckr_pat_580M4WyCXJtuftP231eFTdpGRSU" | docker login -u "hamasandid" --password-stdin
                             docker push ${DOCKERHUB_USER}/${BACKEND_IMAGE}:${VERSION}
                             docker push ${DOCKERHUB_USER}/${FRONTEND_IMAGE}:${VERSION}
-                        """
-                    } else {
-                        bat """
-                            echo dckr_pat_q2kLN5GhImSZ2rQvmoPX8wtyWkc | docker login -u jihed601 --password-stdin
-                            docker push %DOCKERHUB_USER%/%BACKEND_IMAGE%:%VERSION%
-                            docker push %DOCKERHUB_USER%/%FRONTEND_IMAGE%:%VERSION%
                         """
                     }
                 }
@@ -94,9 +73,6 @@ pipeline {
                     if (isUnix()) {
                         sh 'docker compose -f docker-compose.yml down --remove-orphans'
                         sh 'docker compose -f docker-compose.yml up -d'
-                    } else {
-                        bat 'docker compose -f docker-compose.yml down --remove-orphans'
-                        bat 'docker compose -f docker-compose.yml up -d'
                     }
                 }
             }
