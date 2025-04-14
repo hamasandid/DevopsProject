@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   backend:
-    image: jihedna/backend_img:5.5
+    image: hamasandid/backend_img:5.5
     ports:
       - "8086:8086"
     environment:
@@ -16,7 +16,7 @@ services:
       - backend_frontend_network
 
   frontend:
-    image: jihedna/frontend_img:5.5
+    image: hamasandid/frontend_img:5.5
     ports:
       - "4301:80"
     depends_on:
